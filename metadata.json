@@ -1,0 +1,6 @@
+{
+  "name": "HQ Sports Management",
+  "description": "Soccer and handball athletic performance analytics, player profiles, and community feed with coach admin control.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

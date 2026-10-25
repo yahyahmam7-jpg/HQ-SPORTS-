@@ -1,0 +1,835 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HQ Sports Management - Soccer & Handball</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #d4af37; /* Gold */
+            --dark: #121212;
+            --darker: #0a0a0a;
+            --card-bg: #1e1e1e;
+            --text: #ffffff;
+            --text-secondary: #b3b3b3;
+            --accent: #1e88e5;
+            --danger: #e53935;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Cairo', sans-serif;
+        }
+
+        body {
+            background-color: var(--dark);
+            color: var(--text);
+            min-height: 100vh;
+        }
+
+        /* Top Bar & Navigation */
+        header {
+            background: var(--darker);
+            border-bottom: 2px solid var(--primary);
+            padding: 10px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .logo-container {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .logo-container img {
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            border: 2px solid var(--primary);
+            object-fit: cover;
+        }
+
+        .logo-container h1 {
+            font-size: 1.1rem;
+            color: var(--primary);
+            font-weight: 700;
+        }
+
+        .nav-icons {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
+
+        .nav-icons button, .lang-switcher {
+            background: none;
+            border: 1px solid var(--primary);
+            color: var(--primary);
+            padding: 6px 12px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: 0.3s;
+        }
+
+        .nav-icons button:hover, .lang-switcher:hover {
+            background: var(--primary);
+            color: var(--dark);
+        }
+
+        /* Main App Container */
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding-bottom: 70px;
+        }
+
+        /* Screens */
+        .screen {
+            display: none;
+            padding: 15px;
+        }
+
+        .screen.active {
+            display: block;
+        }
+
+        /* Welcome / Auth Screen */
+        .auth-card {
+            background: var(--card-bg);
+            border: 1px solid #333;
+            border-radius: 15px;
+            padding: 30px;
+            text-align: center;
+            margin-top: 50px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
+
+        .auth-card img {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            border: 3px solid var(--primary);
+            margin-bottom: 20px;
+            object-fit: cover;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+            text-align: right;
+        }
+
+        [dir="ltr"] .form-group {
+            text-align: left;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+
+        .form-group input, .form-group select {
+            width: 100%;
+            padding: 10px 15px;
+            background: var(--darker);
+            border: 1px solid #444;
+            color: var(--text);
+            border-radius: 8px;
+            outline: none;
+        }
+
+        .form-group input:focus {
+            border-color: var(--primary);
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary), #b8860b);
+            color: var(--dark);
+            border: none;
+            width: 100%;
+            padding: 12px;
+            font-weight: 700;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1rem;
+            margin-top: 10px;
+            transition: 0.3s;
+        }
+
+        .btn-primary:hover {
+            opacity: 0.9;
+        }
+
+        /* Feed Screen (Social Media style) */
+        .create-post-box {
+            background: var(--card-bg);
+            border-radius: 12px;
+            padding: 15px;
+            margin-bottom: 20px;
+            border: 1px solid #333;
+        }
+
+        .create-post-box textarea {
+            width: 100%;
+            background: var(--darker);
+            border: 1px solid #444;
+            color: var(--text);
+            padding: 10px;
+            border-radius: 8px;
+            resize: none;
+            height: 80px;
+            outline: none;
+        }
+
+        .post-card {
+            background: var(--card-bg);
+            border-radius: 12px;
+            margin-bottom: 15px;
+            border: 1px solid #333;
+            overflow: hidden;
+        }
+
+        .post-header {
+            display: flex;
+            align-items: center;
+            padding: 12px;
+            gap: 10px;
+        }
+
+        .post-header img {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 1px solid var(--primary);
+        }
+
+        .post-user-info h4 {
+            font-size: 0.95rem;
+            color: var(--text);
+        }
+
+        .post-user-info span {
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+        }
+
+        .post-body {
+            padding: 0 15px 12px 15px;
+            font-size: 0.95rem;
+            line-height: 1.5;
+        }
+
+        .post-footer {
+            border-top: 1px solid #2a2a2a;
+            padding: 10px 15px;
+            display: flex;
+            justify-content: space-between;
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+
+        .post-actions {
+            display: flex;
+            justify-content: space-around;
+            border-top: 1px solid #2a2a2a;
+            padding: 8px 0;
+            background: #181818;
+        }
+
+        .action-btn {
+            background: none;
+            border: none;
+            color: var(--text-secondary);
+            cursor: pointer;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 0.9rem;
+        }
+
+        .action-btn:hover {
+            color: var(--primary);
+        }
+
+        /* Reactions Picker */
+        .reactions-popup {
+            display: none;
+            position: absolute;
+            background: var(--darker);
+            border: 1px solid var(--primary);
+            border-radius: 30px;
+            padding: 5px 10px;
+            gap: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.5);
+            z-index: 100;
+        }
+
+        .reactions-popup button {
+            background: none;
+            border: none;
+            font-size: 1.3rem;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        .reactions-popup button:hover {
+            transform: scale(1.3);
+        }
+
+        /* Profile Screen & Stats */
+        .profile-header {
+            background: linear-gradient(to bottom, #222, var(--card-bg));
+            padding: 25px 15px;
+            text-align: center;
+            border-bottom: 1px solid #333;
+            border-radius: 0 0 20px 20px;
+        }
+
+        .profile-avatar-container {
+            position: relative;
+            width: 100px;
+            height: 100px;
+            margin: 0 auto 15px auto;
+        }
+
+        .profile-avatar-container img {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            border: 3px solid var(--primary);
+            object-fit: cover;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+            padding: 15px;
+        }
+
+        .stat-card {
+            background: var(--card-bg);
+            border: 1px solid #333;
+            padding: 15px;
+            border-radius: 12px;
+            text-align: center;
+        }
+
+        .stat-card h3 {
+            font-size: 1.5rem;
+            color: var(--primary);
+            margin-bottom: 5px;
+        }
+
+        .stat-card p {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+        }
+
+        /* Admin Panel */
+        .admin-panel {
+            background: var(--card-bg);
+            border: 1px solid var(--primary);
+            border-radius: 12px;
+            padding: 15px;
+            margin-top: 15px;
+        }
+
+        /* Bottom Nav Bar */
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: var(--darker);
+            border-top: 1px solid #333;
+            display: flex;
+            justify-content: space-around;
+            padding: 10px 0;
+            z-index: 1000;
+        }
+
+        .nav-item {
+            background: none;
+            border: none;
+            color: var(--text-secondary);
+            font-size: 1.2rem;
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 3px;
+        }
+
+        .nav-item span {
+            font-size: 0.7rem;
+        }
+
+        .nav-item.active {
+            color: var(--primary);
+        }
+    </style>
+</head>
+<body data-lang="ar">
+
+    <!-- Header -->
+    <header>
+        <div class="logo-container">
+            <img src="Screenshot_٢٠٢٦١٠٢٥-١١٥٢٤٠_Instagram.jpg" alt="HQ Sports Logo" onerror="this.src='https://via.placeholder.com/45'">
+            <div>
+                <h1>HQ SPORTS</h1>
+                <span style="font-size: 0.65rem; color: var(--text-secondary);">Soccer & Handball Analysis</span>
+            </div>
+        </div>
+        <div class="nav-icons">
+            <button class="lang-switcher" onclick="toggleLanguage()">EN / عربي</button>
+            <button onclick="switchScreen('adminScreen')" id="adminNavBtn" style="display:none;"><i class="fa-solid fa-gear"></i></button>
+        </div>
+    </header>
+
+    <div class="container">
+
+        <!-- 1. Registration / Welcome Screen -->
+        <div id="authScreen" class="screen active">
+            <div class="auth-card">
+                <img src="Screenshot_٢٠٢٦١٠٢٥-١١٥٢٤٠_Instagram.jpg" alt="Logo" onerror="this.src='https://via.placeholder.com/100'">
+                <h2 id="authTitle" style="color: var(--primary); margin-bottom: 10px;">انضم إلى HQ Sports</h2>
+                <p id="authSubtitle" style="color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 20px;">سجل بياناتك لتبدأ متابعة تحليلات أدائك الرياضي</p>
+                
+                <form id="registerForm" onsubmit="handleRegister(event)">
+                    <div class="form-group">
+                        <label id="lbl-name">الاسم الكامل</label>
+                        <input type="text" id="regName" required placeholder="مثال: أحمد محمد">
+                    </div>
+                    <div class="form-group">
+                        <label id="lbl-phone">رقم التليفون</label>
+                        <input type="tel" id="regPhone" required placeholder="010xxxxxxxx">
+                    </div>
+                    <div class="form-group">
+                        <label id="lbl-address">العنوان (المدينة / الدولة)</label>
+                        <input type="text" id="regAddress" required placeholder="القاهرة، مصر">
+                    </div>
+                    <div class="form-group">
+                        <label id="lbl-club">النادي أو الفريق</label>
+                        <input type="text" id="regClub" required placeholder="نادي الزمالك / الأهلي">
+                    </div>
+                    <div class="form-group">
+                        <label id="lbl-sport">الرياضة</label>
+                        <select id="regSport">
+                            <option value="كرة قدم / Soccer">كرة قدم ⚽ (Soccer)</option>
+                            <option value="كرة يد / Handball">كرة يد 🤾 (Handball)</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label id="lbl-photo">رابط صورة البروفايل (URL)</label>
+                        <input type="url" id="regPhoto" placeholder="ضع رابط صورتك الشخصية هنا">
+                    </div>
+                    <button type="submit" class="btn-primary" id="btn-submit-reg">تسجيل الدخول والبدء</button>
+                </form>
+            </div>
+        </div>
+
+        <!-- 2. Community Feed Screen (Social Media) -->
+        <div id="feedScreen" class="screen">
+            <div class="create-post-box">
+                <textarea id="postContent" placeholder="شارك أحدث أدائك، تمرينك، أو ملخص مباراتك اليوم..."></textarea>
+                <button class="btn-primary" onclick="createPost()" id="btn-publish" style="margin-top: 10px; padding: 8px;">نشر المنشور</button>
+            </div>
+
+            <div id="postsContainer">
+                <!-- Dynamic Posts -->
+            </div>
+        </div>
+
+        <!-- 3. Player Profile & Stats Screen -->
+        <div id="profileScreen" class="screen">
+            <div class="profile-header">
+                <div class="profile-avatar-container">
+                    <img id="profileImg" src="" alt="Profile">
+                </div>
+                <h2 id="profileName" style="color: var(--primary);">اسم اللاعب</h2>
+                <p id="profileClubSport" style="color: var(--text-secondary); font-size: 0.9rem; margin-top: 3px;"></p>
+                <p id="profileAddress" style="color: var(--text-secondary); font-size: 0.8rem;"></p>
+            </div>
+
+            <h3 style="margin: 20px 0 10px 0; font-size: 1.1rem; color: var(--primary); display: flex; align-items: center; gap: 8px;">
+                <i class="fa-solid fa-chart-line"></i> <span id="stats-title-text">تحليلات الأداء والمباريات (محدثة من الإدارة)</span>
+            </h3>
+
+            <div class="stats-grid" id="playerStatsGrid">
+                <!-- Filled dynamically -->
+            </div>
+        </div>
+
+        <!-- 4. Admin Management Panel (Full Control) -->
+        <div id="adminScreen" class="screen">
+            <h2 style="color: var(--primary); margin-bottom: 15px;"><i class="fa-solid fa-sliders"></i> لوحة التحكم الكاملة للإدارة</h2>
+            <div class="admin-panel">
+                <p style="color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 15px;">قم بتعديل إحصائيات وأداء اللاعبين المسجلين فوراً:</p>
+                <div class="form-group">
+                    <label>اختر اللاعب للتعديل</label>
+                    <select id="adminSelectPlayer" onchange="loadPlayerStatsToAdmin()">
+                        <!-- Dynamic -->
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label id="admin-lbl-matches">عدد المباريات المحللة</label>
+                    <input type="number" id="adminMatches">
+                </div>
+                <div class="form-group">
+                    <label id="admin-lbl-goals">الأهداف / التهديف</label>
+                    <input type="number" id="adminGoals">
+                </div>
+                <div class="form-group">
+                    <label id="admin-lbl-rating">تقييم الأداء العام (من 10)</label>
+                    <input type="number" step="0.1" id="adminRating">
+                </div>
+                <div class="form-group">
+                    <label id="admin-lbl-stamina">معدل اللياقة البدنية والسرعة (%)</label>
+                    <input type="number" id="adminStamina">
+                </div>
+                <button class="btn-primary" onclick="saveAdminStats()">حفظ وتحديث الإحصائيات فوراً</button>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Bottom Navigation Bar -->
+    <nav class="bottom-nav" id="bottomNav" style="display: none;">
+        <button class="nav-item active" onclick="switchScreen('feedScreen')">
+            <i class="fa-solid fa-house"></i>
+            <span id="nav-home">الرئيسية</span>
+        </button>
+        <button class="nav-item" onclick="switchScreen('profileScreen')">
+            <i class="fa-solid fa-user"></i>
+            <span id="nav-profile">بروفايلي</span>
+        </button>
+        <button class="nav-item" onclick="switchScreen('adminScreen')" id="navAdminTab" style="display:none;">
+            <i class="fa-solid fa-shield-halved"></i>
+            <span id="nav-admin">الإدارة</span>
+        </button>
+    </nav>
+
+    <script>
+        // Data Store & State
+        let currentUser = null;
+        let currentLang = 'ar';
+        
+        let usersDB = [
+            {
+                name: "كريم الديب",
+                phone: "01012345678",
+                address: "الإسكندرية، مصر",
+                club: "نادي سموحة",
+                sport: "كرة قدم / Soccer",
+                photo: "https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?w=150",
+                matches: 12,
+                goals: 8,
+                rating: 8.9,
+                stamina: 92
+            }
+        ];
+
+        let postsDB = [
+            {
+                id: 1,
+                name: "كريم الديب",
+                club: "نادي سموحة",
+                photo: "https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?w=150",
+                content: "الحمد لله على أداء اليوم في مباراة القمة وتسجيل هدف الفوز! شكراً لفريق HQ Sports على تحليل التمركز بدقة عالية ⚽🔥",
+                reactions: { "⚽": 5, "🎯": 3, "🔥": 8, "🧤": 1 },
+                comments: [
+                    { user: "محمود حسن", text: "مباريات ممتازة يا بطل استمر!" }
+                ]
+            }
+        ];
+
+        // Dictionary translations
+        const translations = {
+            ar: {
+                authTitle: "انضم إلى HQ Sports",
+                authSubtitle: "سجل بياناتك لتبدأ متابعة تحليلات أدائك الرياضي",
+                lblName: "الاسم الكامل",
+                lblPhone: "رقم التليفون",
+                lblAddress: "العنوان (المدينة / الدولة)",
+                lblClub: "النادي أو الفريق",
+                lblSport: "الرياضة",
+                lblPhoto: "رابط صورة البروفايل (URL)",
+                btnReg: "تسجيل الدخول والبدء",
+                navHome: "الرئيسية",
+                navProfile: "بروفايلي",
+                navAdmin: "الإدارة",
+                statsTitle: "تحليلات الأداء والمباريات (محدثة من الإدارة)",
+                publishBtn: "نشر المنشور",
+                postPlaceholder: "شارك أحدث أدائك، تمرينك، أو ملخص مباراتك اليوم..."
+            },
+            en: {
+                authTitle: "Join HQ Sports",
+                authSubtitle: "Register your data to track your sports performance analysis",
+                lblName: "Full Name",
+                lblPhone: "Phone Number",
+                lblAddress: "Address (City / Country)",
+                lblClub: "Club or Team",
+                lblSport: "Sport",
+                lblPhoto: "Profile Picture URL",
+                btnReg: "Register & Start",
+                navHome: "Home",
+                navProfile: "Profile",
+                navAdmin: "Admin",
+                statsTitle: "Performance & Match Analytics (Updated by Admin)",
+                publishBtn: "Publish Post",
+                postPlaceholder: "Share your latest performance, workout, or match summary..."
+            }
+        };
+
+        function toggleLanguage() {
+            currentLang = currentLang === 'ar' ? 'en' : 'ar';
+            document.body.setAttribute('dir', currentLang === 'ar' ? 'rtl' : 'ltr');
+            document.body.setAttribute('data-lang', currentLang);
+            
+            const t = translations[currentLang];
+            document.getElementById('authTitle').innerText = t.authTitle;
+            document.getElementById('authSubtitle').innerText = t.authSubtitle;
+            document.getElementById('lbl-name').innerText = t.lblName;
+            document.getElementById('lbl-phone').innerText = t.lblPhone;
+            document.getElementById('lbl-address').innerText = t.lblAddress;
+            document.getElementById('lbl-club').innerText = t.lblClub;
+            document.getElementById('lbl-sport').innerText = t.lblSport;
+            document.getElementById('lbl-photo').innerText = t.lblPhoto;
+            document.getElementById('btn-submit-reg').innerText = t.btnReg;
+            document.getElementById('nav-home').innerText = t.navHome;
+            document.getElementById('nav-profile').innerText = t.navProfile;
+            document.getElementById('nav-admin').innerText = t.navAdmin;
+            document.getElementById('stats-title-text').innerText = t.statsTitle;
+            document.getElementById('btn-publish').innerText = t.publishBtn;
+            document.getElementById('postContent').placeholder = t.postPlaceholder;
+        }
+
+        // Navigation between screens
+        function switchScreen(screenId) {
+            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+            document.getElementById(screenId).classList.add('active');
+            
+            document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
+            if(screenId === 'feedScreen') document.querySelectorAll('.nav-item')[0].classList.add('active');
+            if(screenId === 'profileScreen') document.querySelectorAll('.nav-item')[1].classList.add('active');
+            if(screenId === 'adminScreen') {
+                const adminTab = document.getElementById('navAdminTab');
+                if(adminTab) adminTab.classList.add('active');
+            }
+        }
+
+        // Register new user
+        function handleRegister(e) {
+            e.preventDefault();
+            const name = document.getElementById('regName').value;
+            const phone = document.getElementById('regPhone').value;
+            const address = document.getElementById('regAddress').value;
+            const club = document.getElementById('regClub').value;
+            const sport = document.getElementById('regSport').value;
+            let photo = document.getElementById('regPhoto').value;
+            
+            if(!photo) {
+                photo = "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150";
+            }
+
+            currentUser = {
+                name, phone, address, club, sport, photo,
+                matches: 5,
+                goals: 3,
+                rating: 8.5,
+                stamina: 88
+            };
+
+            // Check if admin (e.g. if name contains admin or specific phone)
+            usersDB.push(currentUser);
+            
+            if(phone === "01000000000" || name.toLowerCase().includes("admin") || name.includes("مدير")) {
+                document.getElementById('adminNavBtn').style.display = 'block';
+                document.getElementById('navAdminTab').style.display = 'flex';
+            }
+
+            updateAdminPlayerSelect();
+            setupProfile();
+            renderFeed();
+            
+            document.getElementById('bottomNav').style.display = 'flex';
+            switchScreen('feedScreen');
+        }
+
+        // Setup Profile UI
+        function setupProfile() {
+            if(!currentUser) return;
+            document.getElementById('profileImg').src = currentUser.photo;
+            document.getElementById('profileName').innerText = currentUser.name;
+            document.getElementById('profileClubSport').innerText = `${currentUser.club} | ${currentUser.sport}`;
+            document.getElementById('profileAddress').innerText = currentUser.address;
+
+            const grid = document.getElementById('playerStatsGrid');
+            grid.innerHTML = `
+                <div class="stat-card">
+                    <h3>${currentUser.matches}</h3>
+                    <p>${currentLang === 'ar' ? 'المباريات المحللة' : 'Analyzed Matches'}</p>
+                </div>
+                <div class="stat-card">
+                    <h3>${currentUser.goals}</h3>
+                    <p>${currentLang === 'ar' ? 'الأهداف / المساهمات' : 'Goals / Contributions'}</p>
+                </div>
+                <div class="stat-card">
+                    <h3>${currentUser.rating} / 10</h3>
+                    <p>${currentLang === 'ar' ? 'تقييم الأداء العام' : 'Overall Rating'}</p>
+                </div>
+                <div class="stat-card">
+                    <h3>${currentUser.stamina}%</h3>
+                    <p>${currentLang === 'ar' ? 'معدل اللياقة البدنية' : 'Stamina & Speed'}</p>
+                </div>
+            `;
+        }
+
+        // Create Social Post
+        function createPost() {
+            const content = document.getElementById('postContent').value;
+            if(!content.trim()) return;
+
+            const newPost = {
+                id: Date.now(),
+                name: currentUser.name,
+                club: currentUser.club,
+                photo: currentUser.photo,
+                content: content,
+                reactions: { "⚽": 0, "🎯": 0, "🔥": 0, "🧤": 0 },
+                comments: []
+            };
+
+            postsDB.unshift(newPost);
+            document.getElementById('postContent').value = '';
+            renderFeed();
+        }
+
+        // Render Feed Posts
+        function renderFeed() {
+            const container = document.getElementById('postsContainer');
+            container.innerHTML = '';
+
+            postsDB.forEach(post => {
+                let totalReactions = Object.values(post.reactions).reduce((a, b) => a + b, 0);
+                let reactionsHtml = Object.entries(post.reactions).map(([emoji, count]) => `${emoji} ${count}`).join(' ');
+
+                let commentsHtml = post.comments.map(c => `
+                    <div style="background: var(--darker); padding: 8px 12px; border-radius: 8px; margin-top: 5px; font-size: 0.85rem;">
+                        <strong style="color: var(--primary);">${c.user}:</strong> ${c.text}
+                    </div>
+                `).join('');
+
+                let card = document.createElement('div');
+                card.className = 'post-card';
+                card.innerHTML = `
+                    <div class="post-header">
+                        <img src="${post.photo}" alt="User">
+                        <div class="post-user-info">
+                            <h4>${post.name}</h4>
+                            <span>${post.club}</span>
+                        </div>
+                    </div>
+                    <div class="post-body">
+                        <p>${post.content}</p>
+                    </div>
+                    <div class="post-footer">
+                        <span>${reactionsHtml} (${totalReactions})</span>
+                        <span>${post.comments.length} ${currentLang === 'ar' ? 'تعليقات' : 'Comments'}</span>
+                    </div>
+                    <div class="post-actions">
+                        <button class="action-btn" onclick="reactPost(${post.id}, '⚽')">⚽ ${currentLang === 'ar' ? 'هدف' : 'Goal'}</button>
+                        <button class="action-btn" onclick="reactPost(${post.id}, '🤾')">🤾 ${currentLang === 'ar' ? 'يد' : 'Handball'}</button>
+                        <button class="action-btn" onclick="reactPost(${post.id}, '🔥')">🔥 ${currentLang === 'ar' ? 'أداء عالي' : 'Fire'}</button>
+                        <button class="action-btn" onclick="promptComment(${post.id})"><i class="fa-regular fa-comment"></i> ${currentLang === 'ar' ? 'تعليق' : 'Comment'}</button>
+                    </div>
+                    <div style="padding: 10px; background: #151515;" id="comments-${post.id}">
+                        ${commentsHtml}
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        function reactPost(postId, emoji) {
+            let post = postsDB.find(p => p.id === postId);
+            if(post) {
+                post.reactions[emoji] = (post.reactions[emoji] || 0) + 1;
+                renderFeed();
+            }
+        }
+
+        function promptComment(postId) {
+            let commentText = prompt(currentLang === 'ar' ? "اكتب تعليقك:" : "Write your comment:");
+            if(commentText) {
+                let post = postsDB.find(p => p.id === postId);
+                if(post) {
+                    post.comments.push({
+                        user: currentUser ? currentUser.name : (currentLang === 'ar' ? "زائر" : "Guest"),
+                        text: commentText
+                    });
+                    renderFeed();
+                }
+            }
+        }
+
+        // Admin functions
+        function updateAdminPlayerSelect() {
+            const select = document.getElementById('adminSelectPlayer');
+            select.innerHTML = '';
+            usersDB.forEach((u, index) => {
+                let opt = document.createElement('option');
+                opt.value = index;
+                opt.innerText = `${u.name} (${u.club})`;
+                select.appendChild(opt);
+            });
+            loadPlayerStatsToAdmin();
+        }
+
+        function loadPlayerStatsToAdmin() {
+            const index = document.getElementById('adminSelectPlayer').value;
+            if(index !== "" && usersDB[index]) {
+                const p = usersDB[index];
+                document.getElementById('adminMatches').value = p.matches;
+                document.getElementById('adminGoals').value = p.goals;
+                document.getElementById('adminRating').value = p.rating;
+                document.getElementById('adminStamina').value = p.stamina;
+            }
+        }
+
+        function saveAdminStats() {
+            const index = document.getElementById('adminSelectPlayer').value;
+            if(index !== "" && usersDB[index]) {
+                usersDB[index].matches = parseInt(document.getElementById('adminMatches').value);
+                usersDB[index].goals = parseInt(document.getElementById('adminGoals').value);
+                usersDB[index].rating = parseFloat(document.getElementById('adminRating').value);
+                usersDB[index].stamina = parseInt(document.getElementById('adminStamina').value);
+
+                if(currentUser && usersDB[index].phone === currentUser.phone) {
+                    currentUser = usersDB[index];
+                    setupProfile();
+                }
+
+                alert(currentLang === 'ar' ? "تم تحديث إحصائيات اللاعب بنجاح وتطبيقها في حسابه فوراً!" : "Player stats updated successfully and applied instantly!");
+            }
+        }
+
+        // Initial setup for admin select if default user exists
+        updateAdminPlayerSelect();
+    </script>
+</body>
+</html>
